@@ -1,0 +1,15 @@
+{
+  "name": "fern",
+  "description": "clumpy flow control module",
+  "version": "0.0.0",
+  "main" : "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blacksea/fern.git"
+  },
+  "author": {
+    "name": "Anthony Gasca",
+    "email": "ag@theblacksea.cc"
+  },
+  "license" : "MIT"
+}
