@@ -6,7 +6,7 @@ inherits(Fern,Stream)
 module.exports = Fern
 
 function Fern (opts) {
-  if (!opts.key && !opts.tree) console.error('wrong params')
+  if (!opts.key && !opts.tree) console.error('Fern needs an options object in the format: {key:String,tree:Object}')
   Stream.call(this) 
   this.readable = true
   this.writable = true
