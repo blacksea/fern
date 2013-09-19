@@ -1,7 +1,7 @@
 {
   "name": "fern",
-  "description": "clumpy flow control module",
-  "version": "0.0.0",
+  "description": "clumpy utility thing",
+  "version": "0.0.1",
   "main" : "index.js",
   "repository": {
     "type": "git",
