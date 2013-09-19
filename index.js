@@ -5,7 +5,8 @@ inherits(Fern,Stream)
 
 module.exports = Fern
 
-function Fern (name, obj) {
+function Fern (opts) {
+  if (!opts.key && !opts.tree) console.error('wrong params')
   Stream.call(this) 
   this.readable = true
   this.writable = true
@@ -13,15 +14,17 @@ function Fern (name, obj) {
   
   this.write = function (chunk) {
     if (typeof chunk === 'string') var d = JSON.parse(chunk)
-    if (d instanceof Object && d[name]) {
-      var a = d[name]
+    if (typeof chunk !== 'string') console.error('not a STRING')
+    if (d instanceof Object && d[opts.key]) {
+      var a = d[opts.key]
       var cmd = a[0]
       var param = a[1]
       var cb = a[2]
-      API[cmd](param, function handleResult (val) {
+      opts.tree[cmd](param, function handleResult (val) {
         self.emit('data',JSON.stringify({res:val,fn: cmd}))
       })
     } else {
+      console.error('no match!')
       self.emit('data',chunk)
     } 
   } 
