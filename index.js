@@ -19,9 +19,12 @@ function Fern (opts) {
       var cmd = a[0]
       var param = a[1]
       var cb = a[2]
-      opts.tree[cmd](param, function handleResult (val) {
-        self.emit('data',JSON.stringify({res:val}))
-      })
+      if (!opts.tree[cmd]) console.error('no such command!')
+      if (opts.tree[cmd]) {
+        opts.tree[cmd](param, function handleResult (val) {
+          self.emit('data',JSON.stringify({res:val}))
+        })
+      }
     } else { // ignore & pass through 
       self.emit('data',chunk)
     } 
