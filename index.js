@@ -8,34 +8,39 @@ function Fern (opts) {
 
   var s = through(function write (chunk) {
     var self = this
-    var d = JSON.parse(chunk) // todo: ignore if buffer
-    if (d instanceof Object && d[opts.key]) {
+    var res = {}
+    if (!(chunk instanceof Array)) var d = JSON.parse(chunk) // todo: ignore if buffer
+    if (d && d instanceof Object && d[opts.key]) {
       var a = d[opts.key]
       var cmd = a[0]
+      if (!opts.tree[cmd]) console.error('no such command!')
       var param = a[1]
-      var cb = a[2]
-      if (!opts.tree[cmd]) console.error('no such command!')
-      if (opts.tree[cmd]) {
-        opts.tree[cmd](param, function handleResult (val) {
-          self.emit('data',JSON.stringify({res:val}))
-        })
-      }
+      if (a[2]) var resKey = a[2]
+      opts.tree[cmd](param, function handleResult (val) {
+        if (resKey) res[resKey] = val
+        if (!resKey) res.res = val
+        self.emit('data',JSON.stringify(res))
+      })
     }
-    if (d instanceof Array && !d[opts.key]) {
+    if (!d && chunk instanceof Array) {
+      var d = chunk
       var cmd = d[0]
-      var param = d[1]
       if (!opts.tree[cmd]) console.error('no such command!')
-      if (opts.tree[cmd]) {
-        opts.tree[cmd](param, function handleResult (val) {
-          self.emit('data',JSON.stringify({res:val}))
-        })
-      }
+      var param = d[1]
+      if (d[2]) var resKey = d[2]
+      opts.tree[cmd](param, function handleResult (val) {
+        if (resKey) res[resKey] = val
+        if (!resKey) res.res = val
+        self.emit('data',JSON.stringify(res))
+      })
     }
-    if (!d[opts.key] && !(d instanceof Array)) {
+    if (d && !d[opts.key] && !(d instanceof Array)) {
       self.emit('data', chunk)
     }
   }, function end () {
     this.emit('end')
+  },{
+    autoDestroy:false
   })
 
   return s

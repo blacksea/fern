@@ -1,8 +1,12 @@
 var fern = require('./index.js')
 var through = require('through')
 
-var s = through(function write (chunk) {
-  this.emit('data', chunk)
+setInterval(function () {
+  rs.write(['xTwo',Math.random(),'xox'])
+}, 10)
+
+var rs = through(function write (chunk) {
+  this.emit('data',chunk)
 }, function end () {
   this.emit('end')
 })
@@ -18,5 +22,4 @@ var tree = {
 
 var f = new fern({tree:tree})
 
-s.pipe(f).pipe(process.stdout)
-s.write(['xTwo',Math.random()])
+rs.pipe(f).pipe(process.stdout)
