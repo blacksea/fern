@@ -39,4 +39,4 @@ function Fern (opts) {
   })
 
   return s
-}:
+}
