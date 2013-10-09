@@ -21,7 +21,8 @@ function Fern (opts) {
       opts.tree[cmd](param, function handleResult (val) {
         if (resKey) res[resKey] = val
         if (!resKey) res.res = val
-        self.emit('data',JSON.stringify(res))
+        if (opts.output && opts.output = 'json') self.emit('data',JSON.stringify(res))
+        if (!opts.output) self.emit('data',val)
       })
     } else {
       // ignore
