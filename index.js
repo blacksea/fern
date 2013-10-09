@@ -6,9 +6,10 @@ function Fern (opts) {
 
   // good options handling
 
+  var res = {}
+
   var s = through(function write (chunk) {
     var self = this
-
     
     // filter if its an array & matches with tree
     if (chunk instanceof Array && opts.tree[chunk[0]]) {
