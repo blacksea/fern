@@ -9,9 +9,7 @@ function Fern (opts) {
   var s = through(function write (chunk) {
     var self = this
 
-    // ignore
-    if (!(chunk instanceof Array)) s.emit('data',chunk)
-
+    
     // filter if its an array & matches with tree
     if (chunk instanceof Array && opts.tree[chunk[0]]) {
       var d = chunk
@@ -24,6 +22,9 @@ function Fern (opts) {
         if (!resKey) res.res = val
         self.emit('data',JSON.stringify(res))
       })
+    } else {
+      // ignore
+      s.emit('data',chunk)
     }
   }, function end () {
     this.emit('end')
