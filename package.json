@@ -5,10 +5,10 @@
   "main" : "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/blacksea/fern.git"
+    "url": "https://github.com/nimoy/fern.git"
   },
   "dependencies": {
-    "through": "~2.3.4"
+    "through": ">=2.3.4"
   },
   "author": {
     "name": "Anthony Gasca",

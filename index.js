@@ -1,38 +1,19 @@
 var through = require('through')
 
-module.exports = Fern
-
-function Fern (opts) {
-
-  // good options handling
-
-  var res = {}
-
+module.exports = function Fern (api) {
+  // use object index to match api
   var s = through(function write (chunk) {
-    var self = this
-    
-    // filter if its an array & matches with tree
-    if (chunk instanceof Array && opts.tree[chunk[0]]) {
-      var d = chunk
-      var cmd = d[0]
-      var param = d[1]
-      if (d[2]) var resKey = d[2]
-
-      opts.tree[cmd](param, function handleResult (val) {
-        if (resKey) res[resKey] = val
-        if (!resKey) res.res = val
-        if (opts.output && opts.output = 'json') self.emit('data',JSON.stringify(res))
-        if (!opts.output) self.emit('data',val)
-      })
-    } else {
-      // ignore
-      s.emit('data',chunk)
-    }
+    // data should be an object if its a string try and parse it
+    if (typeof chunk == 'string') var d = json.parse(chunk)
+    // use instanceof? 
+    if (!chunk.i) this.emit('error', 'please attach an index property') 
+    if (chunk.i) var index = chunk.i; delete chunk.i;
+    if (api[index]) api[index](chunk, function handleRes (d) {
+      d.i = index
+      s.emit('data',d)
+    })
   }, function end () {
-    this.emit('end')
-  },{
-    autoDestroy:false
-  })
-
+    this.end()
+  },{autoDestroy:false})
   return s
 }
