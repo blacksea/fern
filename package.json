@@ -10,6 +10,12 @@
   "dependencies": {
     "through": ">=2.3.4"
   },
+  "devDependencies": {
+    "tap": ">=0.0.0"
+  },
+  "scripts": {
+    "test": "tap test.js"
+  },
   "author": {
     "name": "Anthony Gasca",
     "email": "ag@theblacksea.cc"

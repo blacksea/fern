@@ -15,5 +15,6 @@ module.exports = function Fern (api) {
   }, function end () {
     this.end()
   },{autoDestroy:false})
+
   return s
 }
