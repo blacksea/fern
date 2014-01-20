@@ -1,4 +1,4 @@
-var tape = require('tape')
+t var tape = require('tape')
 var fern = require('./fern.js')
 
 var api = fern({
