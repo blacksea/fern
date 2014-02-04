@@ -1,5 +1,5 @@
-t var tape = require('tape')
-var fern = require('./fern.js')
+var tap = require('tap')
+var fern = require('./index.js')
 
 var api = fern({
   one: function (o,out) {
