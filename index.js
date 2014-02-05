@@ -9,15 +9,9 @@ module.exports = function Fern (tree) {
     if (d.key && d.value && d.type) {
       var path = d.key.split(':')
       var fn = path[0] // check fn for callback
-      if (d.type === 'put') { 
-        tree[d.type][fn](d, function (res) {
-          s.emit('data', res)
-        })
-      } else {
-        tree[d.type](d, function (res) {
-          s.emit('data', res)
-        })
-      }
+      tree[d.type][fn](d, function (res) {
+        s.emit('data', res)
+      })
     } else 
       this.emit('error', new Error('input should be leveldb livestream obj like: {key: string,value: json, type:string}'));
   }, function end () {
