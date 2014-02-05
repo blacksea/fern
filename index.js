@@ -1,24 +1,27 @@
 var through = require('through')
 
-// chaining / linking / transforms
+module.exports = function Fern (tree) {
+  // make sure tree is valid
+  if (typeof tree !== 'object' && !tree.put && !tree.del) throw new Error('please pass a fn tree with put & del properties')
 
-module.exports = function Fern (api) {
-  // use object index to match api
-  var s = through(function write (chunk) {
-    // data should be an object if its a string try and parse it
-    if (typeof chunk == 'string') var d = json.parse(chunk)
-    // use instanceof? 
-    if (!chunk.i) this.emit('error', 'please attach an index property') 
-    if (chunk.i) {
-      var index = chunk.i 
-      delete chunk.i
-    }
-    if (api[index]) api[index](chunk, function handleRes (d) {
-      d.i = index
-      s.emit('data',d)
-    })
+  var s = through(function handleData (d) {// should be incoming leveldb livestream
+
+    if (d.key && d.value && d.type) {
+      var path = d.key.split(':')
+      var fn = path[0] // check fn for callback
+      if (d.type === 'put') { 
+        tree[d.type][fn](d, function (res) {
+          s.emit('data', res)
+        })
+      } else {
+        tree[d.type](d, function (res) {
+          s.emit('data', res)
+        })
+      }
+    } else 
+      this.emit('error', new Error('input should be leveldb livestream obj like: {key: string,value: json, type:string}'));
   }, function end () {
-    this.end()
+    this.emit('end')
   }, {autoDestroy:false})
 
   return s
