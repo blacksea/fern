@@ -15,7 +15,7 @@ module.exports = function Fern (tree) {
         if (!e) s.emit('data', res)
       })
     } else 
-      this.emit('error', new Error(d + ' : input should be leveldb livestream obj like: {key: string,value: json, type:string}'));
+      this.emit('error', new Error(JSON.stringify(d) + ' : input should be leveldb livestream obj like: {key: string,value: json, type:string}'));
   }, function end () {
     this.emit('end')
   }, {autoDestroy:false})
