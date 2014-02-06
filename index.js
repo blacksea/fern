@@ -7,7 +7,7 @@ module.exports = function Fern (tree) {
 
   var s = through(function handleData (d) {// should be incoming leveldb livestream
 
-    if (d.key && d.value && d.type) {
+    if (d.key && d.type) {
       var path = d.key.split(':')
       var fn = path[0] // check fn for callback
       tree[d.type][fn](d, function (e, res) {
