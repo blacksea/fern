@@ -11,7 +11,8 @@ module.exports = function Fern (tree) {
     if (d.key && d.type && tree[d.type]) {
       var path = d.key.split(':')
       var fn = path[0] // check fn for callback
-      tree[d.type][fn](d, function (e, res) {
+      !tree[d.type][fn] ? this.emit('error', new Error('No such fn: '+fn+' in tree'))
+        : tree[d.type][fn](d, function (e, res) {
         if (e) s.emit('error', e)
         if (!e) s.emit('data', res)
       })
