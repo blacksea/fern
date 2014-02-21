@@ -1,39 +1,28 @@
-var tap = require('tap')
+//var tap = require('tap')
 var fern = require('./index.js')
 
-var api = fern({
-  one: function (o,out) {
-    o.body += '_POW'
-    out(o)
+var tree = {
+  a : function (d) {
+    console.log(d)
   },
-  two: function (o,out) {
-    o.ar=[0,1,2,3,4,5,6,7,8,9]
-    out(o)
-  },
-  three: function (o,out) {
-    o.a.push(1)
-    o.a.push(2)
-    o.a.push(3)
-    out(o)
+  b : function (d, cb) {
+    d.data = d.data * 5
+    cb(d)
   }
-})
+}
 
-api.on('data', function (d) {
+var bush = fern(tree)
+
+bush.on('data', function (d) {
   console.log(d)
 })
 
-var a = {
-  i:'one',
-  body:'a message body'
-}
+bush.write({
+  type:'a',
+  data: 3
+})
 
-var b = {i:'two'}
-
-var c = {
-  i:'three',
-  a:[] 
-}
-
-api.write(a)
-api.write(b)
-api.write(c)
+bush.write({
+  type:'b',
+  data: 10
+})

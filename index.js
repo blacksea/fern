@@ -3,24 +3,29 @@
 var through = require('through')
 
 module.exports = function Fern (tree) {
-  // make sure tree is valid
-  if (typeof tree !== 'object' && !tree.put && !tree.del) 
-    throw new Error('please pass a fn tree with put & del properties')
 
-  var s = through(function handleData (d) {// should be incoming leveldb livestream
-    if (d.key && d.type && tree[d.type]) {
-      var path = d.key.split(':')
-      var fn = path[0] // check fn for callback
-      !tree[d.type][fn] ? this.emit('error', new Error('No such fn: '+fn+' in tree'))
-        : tree[d.type][fn](d, function (e, res) {
-        if (e) s.emit('error', e)
-        if (!e) s.emit('data', res)
-      })
-    } else 
-      this.emit('error', new Error(JSON.stringify(d) + ' : input should be leveldb livestream obj like: {key: string,value: json, type:string}'));
+  if (typeof tree !== 'object') {
+    for (branch in tree) {
+      if (tree[branch] instanceof Function === false)
+        throw new Error('please pass a fn tree')
+    }
+  }
+
+  var s = through(function handleData (d) {
+    var self = this
+
+    if (d.type && tree[d.type]) {
+      var fn = tree[d.type]
+      fn.length === 2 ? fn(d, self.queue) : fn(d)
+    } else {
+      var e = 'no such fn in tree'
+      this.emit('error', new Error(e))
+    }
   }, function end () {
     this.emit('end')
-  }, {autoDestroy:false})
+  })
+
+  s.autoDestroy = false
 
   return s
 }
