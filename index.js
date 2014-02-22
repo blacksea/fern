@@ -21,7 +21,7 @@ module.exports = function Fern (tree) {
     } else {
       var e = 'Use one of these d.types to call fn in tree:\n'
       for (fn in tree) {
-        e += fn + ','
+        e += fn + '\n'
       }
       e.substr(e.length-2,e.length-1)
       this.emit('data', d)
