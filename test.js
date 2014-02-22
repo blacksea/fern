@@ -3,6 +3,7 @@ var util = require('util')
 var fern = require('./index.js')
 
 // TREES TO TEST
+
 var fakeTree = 'I am a string not a tree!'
 
 var badTree = {
@@ -28,6 +29,7 @@ var goodTree = {
 
 
 // TESTS
+
 test('Calling Fern returns a Stream', function (t) {
   var Stream = require('stream')
   var shrub = fern(goodTree)
@@ -59,24 +61,6 @@ test('Throw Error on wrong arguments', function (t) {
   t.end()
 })
 
-test('Write bad object to default Fern', function (t) {
-  var f = fern(goodTree)
-  f.on('error', function (e) {
-    t.equal(e.name, 'Error')
-    t.end()
-  })
-  f.write({fake:'obj'})
-})
-
-test('Write string to default Fern', function (t) {
-  var f = fern(goodTree)
-  f.on('error', function (e) {
-    t.equal(e.name, 'Error')
-    t.end()
-  })
-  f.write('string')
-})
-
 test('Write good data to default Fern', function (t) {
   var i = 0
   var tree = {
@@ -98,18 +82,6 @@ test('Write good data to default Fern', function (t) {
  f.write({type:'dec',num:5})
 })
 
-test('Write bad data to custom Fern', function (t) {
-  t.plan(6)
-  var f = fern(goodTree, {key:'k', sep:':', pos:1})
-  f.on('error', function (e) {
-    t.equal(e.name, 'Error')
-  })
-  f.write('junk')
-  f.write({bad:'obj'})
-  f.write({k:'inc:blam',num:9})
-  f.write({k:'inc|blam',num:0})
-})
-
 test('Write good data to custom Fern', function (t) {
   t.plan(2)
   var i = 0
@@ -129,4 +101,34 @@ test('Write good data to custom Fern', function (t) {
  f.write({k:'x:inc',num:3})
  f.write({k:'y:dec',num:5})
  t.equal(i,3)
+})
+
+test('Write bad object to default Fern', function (t) {
+  var f = fern(goodTree)
+  f.on('error', function (e) {
+    t.equal(e.name, 'Error')
+    t.end()
+  })
+  f.write({fake:'obj'})
+})
+
+test('Write string to default Fern', function (t) {
+  var f = fern(goodTree)
+  f.on('error', function (e) {
+    t.equal(e.name, 'Error')
+    t.end()
+  })
+  f.write('string')
+})
+
+test('Write bad data to custom Fern', function (t) {
+  t.plan(6)
+  var f = fern(goodTree, {key:'k', sep:':', pos:1})
+  f.on('error', function (e) {
+    t.equal(e.name, 'Error')
+  })
+  f.write('junk')
+  f.write({bad:'obj'})
+  f.write({k:'inc:blam',num:9})
+  f.write({k:'inc|blam',num:0})
 })
