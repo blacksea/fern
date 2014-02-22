@@ -1,4 +1,5 @@
 var test = require('tape')
+var util = require('util')
 var fern = require('./index.js')
 
 // TREES TO TEST
@@ -12,51 +13,120 @@ var badTree = {
 }
 
 var goodTree = {
-  add: function (d, emit) {
-
+  inc: function (d, emit) {
+    d.num++
+    emit(d)
   },
-  subtract: function (d, emit) {
+  dec: function (d, emit) {
+    d.num--
+    emit(d)
   },
   log: function (d) {
-    console.log(d)
+    console.log(d.msg)
   }
 }
 
+
 // TESTS
-test('Making yourself a new Fern', function (t) {
-  // test that fern returns stream given correct input
-
-  // test with wrong tree input
-  var stinkWeed = fern(badTree)
-  var vinylFern = fern(fakeTree)
-
-  // test with normal d.type obj
+test('Calling Fern returns a Stream', function (t) {
+  var Stream = require('stream')
   var shrub = fern(goodTree)
-
-  // test with wrong opts
-  var weed = fern(goodTree, {clump:'fake opt', moss: ['not correct input', 4]})
-
-  // test with correct tree opts and correct tree input
-  var bush = fern(goodTree, {key:'branch', sep:':', pos:1})
-
-  // test with correct opts & correct input & different pos selection
-  var hedge = fern(goodTree, {key:'branch', sep:':', pos:0})
+  t.equal(shrub instanceof Stream, true)
+  t.end()
 })
 
-test('Using your Fern', function (t) {
-
-// test bad data input
-//   not an object
-//   bad key
-//   bad sep
-//   bad pos
-
-// test good data input
-// test fn call
-//   with cb
-//   without cb
-
+test('Throw Error on wrong arguments', function (t) {
+  try {
+    var vinylFern = fern(fakeTree)
+  } catch (e) {
+    t.equal(e.name, 'Error')
+  }
+  try {
+    var stinkWeed = fern(badTree)
+  } catch (e) {
+    t.equal(e.name, 'Error')
+  }
+  try {
+    var weed = fern(goodTree, {clump:'fake opt', moss: ['not correct input', 4]})
+  } catch (e) {
+    t.equal(e.name, 'Error')
+  }
+  try {
+    var weed = fern(goodTree, 'oo')
+  } catch (e) {
+    t.equal(e.name, 'Error')
+  }
+  t.end()
 })
 
+test('Write bad object to default Fern', function (t) {
+  var f = fern(goodTree)
+  f.on('error', function (e) {
+    t.equal(e.name, 'Error')
+    t.end()
+  })
+  f.write({fake:'obj'})
+})
 
+test('Write string to default Fern', function (t) {
+  var f = fern(goodTree)
+  f.on('error', function (e) {
+    t.equal(e.name, 'Error')
+    t.end()
+  })
+  f.write('string')
+})
 
+test('Write good data to default Fern', function (t) {
+  var i = 0
+  var tree = {
+    inc: function (d) {
+      i = d.num
+     },
+     dec: function (d, cb) {
+       d.num--
+       cb(d)
+     }
+   }
+ var f = fern(tree)
+ f.on('data', function (d) {
+   t.equal(d.num,4)
+   t.end()
+ })
+ f.write({type:'inc',num:3})
+ t.equal(i,3)
+ f.write({type:'dec',num:5})
+})
+
+test('Write bad data to custom Fern', function (t) {
+  t.plan(6)
+  var f = fern(goodTree, {key:'k', sep:':', pos:1})
+  f.on('error', function (e) {
+    t.equal(e.name, 'Error')
+  })
+  f.write('junk')
+  f.write({bad:'obj'})
+  f.write({k:'inc:blam',num:9})
+  f.write({k:'inc|blam',num:0})
+})
+
+test('Write good data to custom Fern', function (t) {
+  t.plan(2)
+  var i = 0
+  var tree = {
+    inc: function (d) {
+      i = d.num
+     },
+     dec: function (d, cb) {
+       d.num--
+       cb(d)
+     }
+   }
+ var f = fern(tree, {key:'k',sep:':',pos:1})
+ f.on('data', function (d) {
+   t.equal(d.num,4)
+ })
+ f.write({k:'x:inc',num:3})
+ f.write({k:'y:dec',num:5})
+ t.equal(i,3)
+})
