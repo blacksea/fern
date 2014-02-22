@@ -1,5 +1,6 @@
 // FERN
 
+
 var through = require('through')
 
 module.exports = function Fern (tree) {
@@ -18,7 +19,12 @@ module.exports = function Fern (tree) {
       var fn = tree[d.type]
       fn.length === 2 ? fn(d, self.queue) : fn(d)
     } else {
-      var e = 'no such fn in tree'
+      var e = 'Use one of these d.types to call fn in tree:\n'
+      for (fn in tree) {
+        e += fn + ','
+      }
+      e.substr(e.length-2,e.length-1)
+      this.emit('data', d)
       this.emit('error', new Error(e))
     }
   }, function end () {
