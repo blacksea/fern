@@ -12,8 +12,9 @@ var tree = {
 }
 
 var bush = fern(tree)
+var cacti = fern(tree, {key:'key',sep:':',pos:0})
 
-bush.on('data', function (d) {
+cacti.on('data', function (d) {
   console.log(d)
 })
 
@@ -22,7 +23,7 @@ bush.write({
   data: 3
 })
 
-bush.write({
-  type:'b',
+cacti.write({
+  key:'b:fern:blob',
   data: 10
 })
