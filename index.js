@@ -3,7 +3,7 @@
 
 var through = require('through')
 
-module.exports = function Fern (tree) {
+module.exports = function Fern (tree, key) {
 
   if (typeof tree !== 'object') {
     for (branch in tree) {
@@ -14,9 +14,11 @@ module.exports = function Fern (tree) {
 
   var s = through(function handleData (d) {
     var self = this
+    var type
+    !key ? type = d.type : type = d[key]
 
-    if (d.type && tree[d.type]) {
-      var fn = tree[d.type]
+    if (type && tree[type]) {
+      var fn = tree[type]
       fn.length === 2 ? fn(d, self.queue) : fn(d)
     } else {
       var e = 'Use one of these d.types to call fn in tree:\n'
