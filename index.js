@@ -28,7 +28,7 @@ module.exports = function Fern (tree, opts) {
 
   var s = through(function handleData (d) {
     var self = this
-    var fn
+    var fn = null
 
     if (typeof d === 'object') {
       if (USETYPE === true) {
@@ -42,9 +42,9 @@ module.exports = function Fern (tree, opts) {
       self.emit('error', new Error('Fern: unsupported data type : '+typeof d))
     }
 
-    if (fn && tree[fn]) {
+    if (fn !== null && tree[fn]) {
       tree[fn].length === 2 ? tree[fn](d, self.queue) : tree[fn](d)
-    } else {
+    } else if (fn !== null) {
       var e = 'Fern: no function '+fn+' should be one of: \n'
       for (branch in tree) {
         e += branch + '\n'
