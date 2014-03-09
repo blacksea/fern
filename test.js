@@ -94,7 +94,7 @@ test('Write good data to custom Fern', function (t) {
        cb(d)
      }
    }
- var f = fern(tree, {key:'k',sep:':',pos:1})
+ var f = fern(tree, {filter:'k',sep:':',pos:1})
  f.on('data', function (d) {
    t.equal(d.num,4)
  })

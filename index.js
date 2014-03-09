@@ -14,9 +14,9 @@ module.exports = function Fern (tree, opts) {
   }
 
   // objects need key:string sep:string pos:number or d.type
-  if (opts && typeof opts == 'object' && typeof opts.key == 'string' ) {
+  if (opts && typeof opts == 'object' && typeof opts.filter == 'string' ) {
     if (typeof opts.sep == 'string' && typeof opts.pos == 'number') KEYPARSE = true
-  } else if (opts && typeof opts !== 'object' && !opts.key) {
+  } else if (opts && typeof opts !== 'object' && !opts.filter) {
     throw new Error('Fern: weird opts: \n"'+opts+'"\n should be {key:} or {key:,sep:,pos:}')
   } else {
     USETYPE = true
@@ -30,10 +30,10 @@ module.exports = function Fern (tree, opts) {
     if (typeof d === 'object') {
       if (USETYPE === true) {
         d.type ? fn = d.type : self.emit('error', new Error('Fern: write to fern with obj like :{type:}\n"type" should match fn name in fn tree:\n'+tree))
-      } else if (d[opts.key]) {
-        KEYPARSE === true ? fn = d[opts.key].split(opts.sep)[opts.pos] : fn = d[opts.key]
-      } else if (!d[opts.key]) {
-        self.emit('error', new Error('Fern: unable to match custom key: "'+opts.key+'"'))
+      } else if (d[opts.filter]) {
+        KEYPARSE === true ? fn = d[opts.filter].split(opts.sep)[opts.pos] : fn = d[opts.key]
+      } else if (!d[opts.filter]) {
+        self.emit('error', new Error('Fern: unable to match custom key: "'+opts.filter+'"'))
       }
     } else {
       self.emit('error', new Error('Fern: unsupported data type : "'+typeof d+'"'))
