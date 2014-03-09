@@ -1,6 +1,3 @@
-// FERN
-
-
 var through = require('through')
 
 

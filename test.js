@@ -123,7 +123,7 @@ test('Write string to default Fern', function (t) {
 
 test('Write bad data to custom Fern', function (t) {
   t.plan(4)
-  var f = fern(goodTree, {key:'k', sep:':', pos:1})
+  var f = fern(goodTree, {filter:'k', sep:':', pos:1})
   f.on('error', function (e) {
     t.equal(e.name, 'Error')
   })
